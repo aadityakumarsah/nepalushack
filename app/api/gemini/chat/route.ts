@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     };
 
     const { text } = await generateText({
-      model: google("gemini-2.0-flash-001"),
+      model: google("gemini-flash-latest"),
       system: systemPrompt,
       messages: messages.map((m) => ({
         role: m.role,
