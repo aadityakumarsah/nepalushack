@@ -1,18 +1,23 @@
-import Agent from "@/components/Agent";
+import { redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
+
+import InterviewForm from "@/components/InterviewForm";
 
 const Page = async () => {
-  // Use a default user since auth is removed
-  const user = {
-    name: "User",
-    id: "default-user",
-  };
+  const clerkUser = await currentUser();
+  if (!clerkUser) redirect("/sign-in");
 
   return (
-    <>
-      <h3>Interview generation</h3>
+    <div className="flex flex-col gap-8">
+      <div>
+        <h3 className="text-2xl font-bold">New Interview</h3>
+        <p className="text-light-100 mt-1">
+          Set up your mock interview and choose your AI interviewer persona.
+        </p>
+      </div>
 
-      <Agent userName={user.name} userId={user.id} type="generate" />
-    </>
+      <InterviewForm userId={clerkUser.id} />
+    </div>
   );
 };
 

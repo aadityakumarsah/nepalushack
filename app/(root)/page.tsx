@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { currentUser } from "@clerk/nextjs/server";
 
 import { Button } from "@/components/ui/button";
 import InterviewCard from "@/components/InterviewCard";
@@ -10,8 +11,8 @@ import {
 } from "@/lib/actions/general.action";
 
 async function Home() {
-  // Use a default user ID since auth is removed
-  const userId = "default-user";
+  const clerkUser = await currentUser();
+  const userId = clerkUser?.id ?? "guest";
 
   const [userInterviews, allInterview] = await Promise.all([
     getInterviewsByUserId(userId),

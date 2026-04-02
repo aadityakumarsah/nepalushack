@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 
 import Agent from "@/components/Agent";
 import { getRandomInterviewCover } from "@/lib/utils";
@@ -10,13 +11,16 @@ import {
 } from "@/lib/actions/general.action";
 import DisplayTechIcons from "@/components/DisplayTechIcons";
 
-const InterviewDetails = async ({ params }: RouteParams) => {
+const InterviewDetails = async ({ params, searchParams }: RouteParams) => {
   const { id } = await params;
+  const { persona: personaId } = await searchParams;
 
-  // Use a default user since auth is removed
+  const clerkUser = await currentUser();
+  if (!clerkUser) redirect("/sign-in");
+
   const user = {
-    name: "User",
-    id: "default-user",
+    name: clerkUser.firstName ?? "Candidate",
+    id: clerkUser.id,
   };
 
   const interview = await getInterviewById(id);
@@ -57,6 +61,7 @@ const InterviewDetails = async ({ params }: RouteParams) => {
         type="interview"
         questions={interview.questions}
         feedbackId={feedback?.id}
+        personaId={personaId ?? "older-sibling"}
       />
     </>
   );

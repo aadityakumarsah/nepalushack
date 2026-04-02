@@ -2,6 +2,7 @@ import dayjs from "dayjs";
 import Link from "next/link";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+import { currentUser } from "@clerk/nextjs/server";
 
 import {
   getFeedbackByInterviewId,
@@ -12,10 +13,12 @@ import { Button } from "@/components/ui/button";
 const Feedback = async ({ params }: RouteParams) => {
   const { id } = await params;
 
-  // Use a default user since auth is removed
+  const clerkUser = await currentUser();
+  if (!clerkUser) redirect("/sign-in");
+
   const user = {
-    name: "User",
-    id: "default-user",
+    name: clerkUser.firstName ?? "Candidate",
+    id: clerkUser.id,
   };
 
   const interview = await getInterviewById(id);
